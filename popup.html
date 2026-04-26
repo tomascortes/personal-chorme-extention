@@ -58,107 +58,6 @@
       margin-bottom: 8px;
     }
 
-    /* ── Tab Cleaner ── */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      padding: 8px 12px;
-      background: #16213e;
-      border-radius: 8px;
-    }
-    .toggle-row label { font-size: 13px; font-weight: 500; }
-    .switch { position: relative; width: 40px; height: 22px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; inset: 0;
-      background: #444; border-radius: 22px;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .slider::before {
-      content: ''; position: absolute;
-      width: 16px; height: 16px; left: 3px; bottom: 3px;
-      background: #fff; border-radius: 50%;
-      transition: transform 0.2s;
-    }
-    .switch input:checked + .slider { background: #e94560; }
-    .switch input:checked + .slider::before { transform: translateX(18px); }
-    .timeout-row {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 14px; padding: 8px 12px;
-      background: #16213e; border-radius: 8px; font-size: 13px;
-    }
-    .timeout-row input {
-      width: 56px; padding: 4px 6px;
-      border: 1px solid #333; border-radius: 6px;
-      background: #0f3460; color: #fff;
-      font-size: 13px; text-align: center;
-    }
-    .timeout-row input:focus { outline: none; border-color: #e94560; }
-    .add-row {
-      display: flex; gap: 6px; margin-bottom: 10px;
-    }
-    .add-row input {
-      flex: 1; padding: 7px 10px;
-      border: 1px solid #333; border-radius: 6px;
-      background: #0f3460; color: #fff; font-size: 13px;
-    }
-    .add-row input::placeholder { color: #666; }
-    .add-row input:focus { outline: none; border-color: #e94560; }
-    .add-row button {
-      padding: 7px 14px; background: #e94560; color: #fff;
-      border: none; border-radius: 6px;
-      font-size: 13px; font-weight: 600; cursor: pointer;
-    }
-    .add-row button:hover { background: #c73650; }
-    .exc-list .item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 10px; background: #16213e;
-      border-radius: 6px; margin-bottom: 4px; font-size: 13px;
-    }
-    .exc-list .item span { word-break: break-all; }
-    .exc-list .item button {
-      background: none; border: none; color: #e94560;
-      font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
-    }
-    .exc-list .item button:hover { color: #ff6b81; }
-    .closed-section { margin-top: 14px; }
-    .closed-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .closed-header button {
-      background: none; border: none; color: #e94560;
-      font-size: 11px; cursor: pointer;
-    }
-    .closed-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 10px; background: #16213e;
-      border-radius: 6px; margin-bottom: 4px;
-      cursor: pointer; transition: background 0.15s;
-    }
-    .closed-item:hover { background: #1b2a4a; }
-    .closed-item .favicon {
-      width: 16px; height: 16px; border-radius: 2px;
-      flex-shrink: 0; background: #0f3460;
-    }
-    .closed-item .closed-title {
-      flex: 1; font-size: 12px; min-width: 0;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .closed-item .closed-time {
-      font-size: 10px; color: #555; flex-shrink: 0;
-    }
-    .closed-item .reopen {
-      background: none; border: none; color: #e94560;
-      font-size: 13px; cursor: pointer; flex-shrink: 0;
-      padding: 0 2px;
-    }
-    .empty {
-      color: #555; font-size: 12px; text-align: center; padding: 12px;
-    }
-
     /* ── Cookie Editor ── */
     .cookie-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -503,16 +402,19 @@
     .unhook-features {
       padding: 0;
     }
+    .unhook-features.disabled .unhook-feature {
+      opacity: 0.4; pointer-events: none;
+    }
     .unhook-feature {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 12px; background: #16213e;
       border-radius: 8px; margin-bottom: 6px;
-      font-size: 12px;
+      font-size: 12px; cursor: pointer; user-select: none;
     }
-    .unhook-feature .check {
-      color: #4caf50; font-size: 14px; flex-shrink: 0;
+    .unhook-sub {
+      width: 14px; height: 14px; flex-shrink: 0;
+      accent-color: #4caf50; cursor: pointer;
     }
-    .unhook-feature.off .check { color: #555; }
 
     /* ── JS Toggle ── */
     .js-big-toggle {
@@ -538,124 +440,6 @@
     .js-note {
       font-size: 11px; color: #555; text-align: center;
       padding: 8px; line-height: 1.5;
-    }
-
-    /* ── Music Recognizer ── */
-    .music-center {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 20px 0 16px; gap: 8px;
-      border-radius: 16px; margin: 0 0 10px;
-      transition: background 0.4s, padding 0.4s;
-    }
-    .music-center.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 30px 0 20px;
-    }
-    .listen-btn {
-      width: 100px; height: 100px; border-radius: 50%;
-      border: none; background: #fff;
-      cursor: pointer; display: flex; align-items: center;
-      justify-content: center; transition: all 0.3s;
-      position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-    .listen-btn:hover { transform: scale(1.05); }
-    .listen-btn .mic-icon { display: block; }
-    .listen-btn .bars-icon { display: none; }
-    .listen-btn.recording .mic-icon { display: none; }
-    .listen-btn.recording .bars-icon { display: flex; }
-    .listen-btn.recording {
-      animation: pulse-ring 1.5s ease-out infinite;
-    }
-    /* Sound bars animation */
-    .sound-bars {
-      display: flex; align-items: center;
-      gap: 4px; height: 36px;
-    }
-    .sound-bars .bar {
-      width: 6px; border-radius: 3px;
-      background: #e94560;
-      animation: soundbar 1s ease-in-out infinite;
-    }
-    .sound-bars .bar:nth-child(1) { height: 24px; animation-delay: 0s; }
-    .sound-bars .bar:nth-child(2) { height: 36px; animation-delay: 0.15s; }
-    .sound-bars .bar:nth-child(3) { height: 28px; animation-delay: 0.3s; }
-    .sound-bars .bar:nth-child(4) { height: 36px; animation-delay: 0.45s; }
-    .sound-bars .bar:nth-child(5) { height: 20px; animation-delay: 0.6s; }
-    @keyframes soundbar {
-      0%, 100% { transform: scaleY(0.4); }
-      50% { transform: scaleY(1); }
-    }
-    @keyframes pulse-ring {
-      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-      70% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
-      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-    }
-    .listen-label {
-      font-size: 15px; font-weight: 600; color: #888;
-      margin-top: 4px; transition: color 0.3s;
-    }
-    .music-center.active .listen-label { color: #fff; }
-    .listen-timer {
-      font-size: 24px; font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: #e94560; min-height: 32px;
-      transition: color 0.3s;
-    }
-    .music-center.active .listen-timer { color: #fff; }
-    .music-result {
-      margin-top: 8px; width: 100%;
-    }
-    .music-result .song-card {
-      background: #16213e; border-radius: 10px;
-      padding: 14px; display: flex; gap: 12px;
-      align-items: center;
-    }
-    .song-card .art {
-      width: 56px; height: 56px; border-radius: 8px;
-      background: #0f3460; display: flex;
-      align-items: center; justify-content: center;
-      font-size: 28px; flex-shrink: 0;
-      overflow: hidden;
-    }
-    .song-card .art img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    .song-card .info { flex: 1; min-width: 0; }
-    .song-card .title {
-      font-size: 14px; font-weight: 600; color: #fff;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .song-card .artist {
-      font-size: 12px; color: #aaa; margin-top: 2px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .song-card .album {
-      font-size: 11px; color: #666; margin-top: 2px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .music-error {
-      text-align: center; padding: 12px;
-      background: #2a1525; border-radius: 8px;
-      font-size: 12px; color: #e94560;
-    }
-    .music-history {
-      margin-top: 14px;
-    }
-    .music-history h2 { margin-bottom: 6px; }
-    .history-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px; background: #16213e;
-      border-radius: 6px; margin-bottom: 4px;
-    }
-    .history-item .h-title {
-      font-size: 12px; font-weight: 500; color: #ddd;
-      flex: 1; min-width: 0;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .history-item .h-artist {
-      font-size: 11px; color: #888;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 100px;
     }
 
     /* ── Picture-in-Picture ── */
@@ -731,8 +515,7 @@
 
   <!-- Nav -->
   <div class="nav">
-    <button class="active" data-page="tabcleaner">🚮 Tabs</button>
-    <button data-page="cookies">🍪 Cookies</button>
+    <button class="active" data-page="cookies">🍪 Cookies</button>
     <button data-page="redirects">🔀 Redirects</button>
     <button data-page="darkmode">🌙 Dark</button>
     <button data-page="xdim">𝕏 Dim</button>
@@ -740,38 +523,12 @@
     <button data-page="nocookie">🚫 GDPR</button>
     <button data-page="livecss">🎨 CSS</button>
     <button data-page="unhook">📺 YT</button>
-    <button data-page="music">🎵 Music</button>
     <button data-page="pip">🖼 PiP</button>
     <button data-page="jsonformat">{} JSON</button>
   </div>
 
-  <!-- ═══ Tab Cleaner Page ═══ -->
-  <div class="page active" id="page-tabcleaner">
-    <div class="page-body">
-      <div class="toggle-row">
-        <label>Auto-close enabled</label>
-        <label class="switch">
-          <input type="checkbox" id="enabled">
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="timeout-row">
-        <label>Close after</label>
-        <input type="number" id="timeout" min="1" max="1440" value="5">
-        <span>minutes of inactivity</span>
-      </div>
-      <h2>Excluded Hosts</h2>
-      <div class="add-row">
-        <input type="text" id="hostInput" placeholder="e.g. google.com">
-        <button id="addBtn">Add</button>
-      </div>
-      <div class="exc-list" id="list"></div>
-      <div class="closed-section" id="closedSection"></div>
-    </div>
-  </div>
-
   <!-- ═══ Cookie Editor Page ═══ -->
-  <div class="page" id="page-cookies">
+  <div class="page active" id="page-cookies">
     <div class="page-body" id="cookieBody">
       <div class="cookie-header">
         <div class="domain" id="cookieDomain">Loading...</div>
@@ -946,11 +703,11 @@
       </div>
 
       <div class="unhook-features" id="unhookFeatures">
-        <div class="unhook-feature"><span class="check">✓</span> Black homepage — no feed</div>
-        <div class="unhook-feature"><span class="check">✓</span> No sidebar suggestions</div>
-        <div class="unhook-feature"><span class="check">✓</span> No end screen overlays</div>
-        <div class="unhook-feature"><span class="check">✓</span> No Shorts shelves</div>
-        <div class="unhook-feature"><span class="check">✓</span> Wider video player</div>
+        <label class="unhook-feature"><input type="checkbox" class="unhook-sub" id="unhookHomepage" checked> Black homepage — no feed</label>
+        <label class="unhook-feature"><input type="checkbox" class="unhook-sub" id="unhookSidebar" checked> No sidebar suggestions</label>
+        <label class="unhook-feature"><input type="checkbox" class="unhook-sub" id="unhookEndscreen" checked> No end screen overlays</label>
+        <label class="unhook-feature"><input type="checkbox" class="unhook-sub" id="unhookShorts" checked> No Shorts shelves</label>
+        <label class="unhook-feature"><input type="checkbox" class="unhook-sub" id="unhookWider" checked> Wider video player</label>
       </div>
 
       <div class="xdim-note" style="margin-top:10px">
@@ -980,48 +737,6 @@
       <div class="js-note">
         Disable JavaScript for the current site.<br>
         The page will reload when toggled.
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ Music Recognizer Page ═══ -->
-  <div class="page" id="page-music">
-    <div class="page-body">
-      <div class="music-center">
-        <button class="listen-btn" id="listenBtn">
-          <span class="mic-icon">
-            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round">
-              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
-              <path d="M19 10v2a7 7 0 01-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="23"/>
-              <line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-          </span>
-          <span class="bars-icon">
-            <div class="sound-bars">
-              <div class="bar"></div>
-              <div class="bar"></div>
-              <div class="bar"></div>
-              <div class="bar"></div>
-              <div class="bar"></div>
-            </div>
-          </span>
-        </button>
-        <div class="listen-timer" id="listenTimer"></div>
-        <div class="listen-label" id="listenLabel">Tap to listen</div>
-        <button id="acrSettingsBtn" style="background:none;border:none;color:#555;font-size:16px;cursor:pointer;margin-top:4px;" title="API Settings">⚙️</button>
-      </div>
-      <div class="music-result" id="musicResult"></div>
-      <div class="music-history" id="musicHistory"></div>
-      <div class="dark-section" id="acrConfig" style="margin-top:14px;display:none">
-        <a href="https://www.acrcloud.com/sign-up/" target="_blank" style="display:block;text-align:center;padding:8px;margin-bottom:10px;background:#2a1525;border:1px solid #e94560;border-radius:6px;color:#e94560;font-size:12px;font-weight:600;text-decoration:none;">Sign up for free ACRCloud API keys →</a>
-        <label>ACRCloud Host</label>
-        <input type="text" id="acrHost" placeholder="identify-eu-west-1.acrcloud.com" style="width:100%;padding:6px 8px;background:#0f1e3d;border:1px solid #2a2a4a;border-radius:4px;color:#ddd;font-size:12px;margin-bottom:6px;">
-        <label>Access Key</label>
-        <input type="text" id="acrKey" placeholder="your access key" style="width:100%;padding:6px 8px;background:#0f1e3d;border:1px solid #2a2a4a;border-radius:4px;color:#ddd;font-size:12px;margin-bottom:6px;">
-        <label>Access Secret</label>
-        <input type="password" id="acrSecret" placeholder="your access secret" style="width:100%;padding:6px 8px;background:#0f1e3d;border:1px solid #2a2a4a;border-radius:4px;color:#ddd;font-size:12px;margin-bottom:6px;">
-        <button class="btn-save" id="acrSaveBtn" style="margin-top:4px;padding:6px 14px;font-size:12px;">Save</button>
       </div>
     </div>
   </div>

@@ -5,8 +5,7 @@
 (() => {
   const STYLE_ID = "sl-unhook";
 
-  const UNHOOK_CSS = `
-    /* Homepage: hide feed entirely */
+  const CSS_HOMEPAGE = `
     ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
     ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
     ytd-browse[page-subtype="home"] #primary > ytd-rich-grid-renderer,
@@ -15,7 +14,6 @@
     ytd-browse[page-subtype="home"] .ytd-browse-chips-wrapper {
       display: none !important;
     }
-    /* Black homepage background with message */
     ytd-browse[page-subtype="home"] #primary {
       display: flex !important;
       justify-content: center;
@@ -29,17 +27,30 @@
       font-family: 'YouTube Sans', 'Roboto', sans-serif;
       font-weight: 500;
     }
-    /* Sidebar suggestions on video pages */
+    ytd-browse[page-subtype="trending"] #contents {
+      display: none !important;
+    }
+    #chips-wrapper.ytd-feed-filter-chip-bar-renderer,
+    ytd-feed-filter-chip-bar-renderer {
+      display: none !important;
+    }
+  `;
+
+  const CSS_SIDEBAR = `
     #secondary.ytd-watch-flexy,
     ytd-watch-next-secondary-results-renderer,
     #related {
       display: none !important;
     }
-    /* Make video player wider without sidebar */
+  `;
+
+  const CSS_WIDER = `
     ytd-watch-flexy[flexy][is-two-columns_] #primary.ytd-watch-flexy {
       max-width: 100% !important;
     }
-    /* End screen suggestions & cards */
+  `;
+
+  const CSS_ENDSCREEN = `
     .ytp-ce-element,
     .ytp-endscreen-content,
     .ytp-suggestion-set,
@@ -48,47 +59,70 @@
     .ytp-ce-element-show {
       display: none !important;
     }
-    /* Trending / Explore feed */
-    ytd-browse[page-subtype="trending"] #contents {
-      display: none !important;
-    }
-    /* Homepage chips / categories bar */
-    #chips-wrapper.ytd-feed-filter-chip-bar-renderer,
-    ytd-feed-filter-chip-bar-renderer {
-      display: none !important;
-    }
-    /* Shorts shelf */
+  `;
+
+  const CSS_SHORTS = `
     ytd-rich-shelf-renderer[is-shorts],
     ytd-reel-shelf-renderer {
       display: none !important;
     }
-    /* "For You" / recommendation shelves */
     ytd-rich-shelf-renderer {
       display: none !important;
     }
   `;
 
-  function inject() {
-    if (document.getElementById(STYLE_ID)) return;
+  const FEATURE_CSS = { homepage: CSS_HOMEPAGE, sidebar: CSS_SIDEBAR, wider: CSS_WIDER, endscreen: CSS_ENDSCREEN, shorts: CSS_SHORTS };
+
+  function applyFeatures(features) {
+    const el = document.getElementById(STYLE_ID);
+    if (el) el.remove();
+    const css = Object.entries(FEATURE_CSS)
+      .filter(([key]) => features[key] !== false)
+      .map(([, css]) => css)
+      .join("\n");
+    if (!css.trim()) return;
     const style = document.createElement("style");
     style.id = STYLE_ID;
-    style.textContent = UNHOOK_CSS;
+    style.textContent = css;
     (document.head || document.documentElement).appendChild(style);
   }
 
-  function remove() {
+  function removeAll() {
     const el = document.getElementById(STYLE_ID);
     if (el) el.remove();
   }
 
-  chrome.storage.local.get(["unhook_enabled"], (data) => {
-    if (data.unhook_enabled !== false) inject();
+  const ALL_KEYS = ["unhook_enabled", "unhook_homepage", "unhook_sidebar", "unhook_endscreen", "unhook_shorts", "unhook_wider"];
+
+  chrome.storage.local.get(ALL_KEYS, (data) => {
+    if (data.unhook_enabled === false) return;
+    applyFeatures({
+      homepage: data.unhook_homepage !== false,
+      sidebar: data.unhook_sidebar !== false,
+      endscreen: data.unhook_endscreen !== false,
+      shorts: data.unhook_shorts !== false,
+      wider: data.unhook_wider !== false,
+    });
   });
 
   chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.type === "unhook_toggle") {
-      if (msg.enabled) inject();
-      else remove();
+    if (msg.type === "unhook_update") {
+      if (!msg.enabled) removeAll();
+      else applyFeatures(msg.features);
+    } else if (msg.type === "unhook_toggle") {
+      if (msg.enabled) {
+        chrome.storage.local.get(ALL_KEYS, (data) => {
+          applyFeatures({
+            homepage: data.unhook_homepage !== false,
+            sidebar: data.unhook_sidebar !== false,
+            endscreen: data.unhook_endscreen !== false,
+            shorts: data.unhook_shorts !== false,
+            wider: data.unhook_wider !== false,
+          });
+        });
+      } else {
+        removeAll();
+      }
     }
   });
 })();
