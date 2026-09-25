@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "🚀 SuperLevels",
+  "name": "Personal Extention",
   "version": "2.0",
-  "description": "The super Chrome extension by @levelsio — dark mode, GDPR cookie dismisser, YouTube unhook, tab cleaner, cookie editor, redirect tracer, live CSS editor, X/Twitter dim mode, JS toggle, JSON formatter, music recognizer, picture-in-picture, Google Maps links, and view image.",
+  "description": "Personal Chrome extension — dark mode, GDPR cookie dismisser, YouTube unhook, LinkedIn suggestion filter, favicon replacer, cookie editor, redirect tracer, live CSS editor, X/Twitter dim mode, JS toggle, JSON formatter, picture-in-picture, Google Maps links, and view image.",
   "permissions": ["tabs", "storage", "alarms", "cookies", "activeTab", "webRequest", "webNavigation", "tabCapture", "contentSettings", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -10,11 +10,11 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "🚀 superlevels"
+    "default_title": "Personal Extention"
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "js": ["darkmode.js", "nocookie.js", "livecss.js"],
+    "js": ["darkmode.js", "nocookie.js", "livecss.js", "favicon.js"],
     "run_at": "document_start"
   }, {
     "matches": ["<all_urls>"],
@@ -23,6 +23,10 @@
   }, {
     "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*"],
     "js": ["unhook.js"],
+    "run_at": "document_start"
+  }, {
+    "matches": ["*://www.linkedin.com/*"],
+    "js": ["linkedin.js"],
     "run_at": "document_start"
   }, {
     "matches": ["*://x.com/*", "*://twitter.com/*", "*://mobile.x.com/*", "*://mobile.twitter.com/*"],

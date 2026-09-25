@@ -1,18 +1,12 @@
-# 🚀 superlevels
+# Personal Extention
 
-by [@levelsio](https://x.com/levelsio)
-
-[![GitHub stars](https://img.shields.io/github/stars/levelsio/superlevels?style=social)](https://github.com/levelsio/superlevels/stargazers)
-
-Please star SuperLevels if you like it!
-
-A super Chrome extension that replaces 12+ separate extensions with one open-source, privacy-respecting package.
+Personal Chrome extension that replaces 12+ separate extensions with one open-source, privacy-respecting package.
 
 Most Chrome extensions are closed-source malware/spyware-filled garbage that form a massive security risk. This one is open source and you can read and check the source code (with AI) before you install it, and customize it to your liking!
 
 ## Demo
 
-![SuperLevels Demo](demo.gif)
+![Personal Extention Demo](demo.gif)
 
 ## Security
 
@@ -26,9 +20,6 @@ Before installing any Chrome extension, you should verify it's safe. This extens
 You should do this for **every** Chrome extension you use. Most extensions are closed-source and can't be audited — this one can.
 
 ## Features
-
-### 🚮 Tab Cleaner
-Automatically closes inactive tabs after a configurable timeout (default: 5 minutes). Set excluded hosts to keep important tabs alive. View and re-open recently closed tabs.
 
 ### 🍪 Cookie Editor
 Full cookie manager for the current site. View, edit, add, and delete cookies. Export cookies as JSON. Expand any cookie to see and modify all fields including domain, path, SameSite, secure, and httpOnly flags.
@@ -51,8 +42,14 @@ Auto-hides and auto-clicks cookie consent banners. Supports OneTrust, CookieBot,
 ### 🎨 Live CSS Editor
 Write custom CSS for any website, applied in real-time as you type. Saved per-domain. Supports tab key for indentation.
 
+### ⭐ Favicon Replacer
+Replace the favicon for normal web pages with a saved image URL per hostname.
+
 ### 📺 YouTube Unhook
 Removes YouTube distractions: no homepage feed, no sidebar suggestions, no end screen overlays, no Shorts. Search still works — just no algorithmic recommendations.
+
+### 💼 LinkedIn Filter
+Hides suggested LinkedIn feed posts locally. No account actions, no network calls — just removes suggestion blocks from view.
 
 ### 🎵 Music Recognizer
 Shazam-like music identification for any tab. Captures 10 seconds of audio and identifies the song via [ACRCloud](https://www.acrcloud.com/sign-up/) (free signup, bring your own API key). Results link to YouTube. History of recognized songs.
@@ -76,7 +73,7 @@ Auto-detects pure JSON response pages and formats them with syntax highlighting,
 3. Click **Manage Extensions** if you're not already there
 4. Enable **Developer mode** (toggle in the top right corner)
 5. Click **Load unpacked**
-6. Select the `superlevels` folder
+6. Select the `personal-chorme-extention` folder
 7. The 🚀 icon appears in your toolbar — you're done!
 
 ## Privacy

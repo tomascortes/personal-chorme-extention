@@ -15,7 +15,9 @@ function switchToPage(page) {
   if (page === "jstoggle") loadJsToggle();
   if (page === "nocookie") loadNoCookie();
   if (page === "livecss") loadLiveCSS();
+  if (page === "favicon") loadFavicon();
   if (page === "unhook") loadUnhook();
+  if (page === "linkedin") loadLinkedIn();
   if (page === "jsonformat") loadJsonFormat();
   chrome.storage.local.set({ last_tab: page });
 }
@@ -597,6 +599,146 @@ livecssClear.addEventListener("click", async () => {
 });
 
 // ═══════════════════════════════════
+//  Favicon Replacer
+// ═══════════════════════════════════
+const faviconToggle = document.getElementById("faviconToggle");
+const faviconStatus = document.getElementById("faviconStatus");
+const faviconHostEl = document.getElementById("faviconHost");
+const faviconUrlEl = document.getElementById("faviconUrl");
+const faviconPreview = document.getElementById("faviconPreview");
+const faviconSave = document.getElementById("faviconSave");
+const faviconClear = document.getElementById("faviconClear");
+const faviconMessage = document.getElementById("faviconMessage");
+
+let faviconHost = "";
+
+function isFaviconPageUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:"].includes(parsed.protocol) && !!parsed.hostname;
+  } catch {
+    return false;
+  }
+}
+
+function isFaviconImageUrl(url) {
+  if (!url) return true;
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:", "data:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
+function updateFaviconUI(enabled) {
+  faviconStatus.textContent = enabled ? "ON" : "OFF";
+  faviconStatus.className = "status " + (enabled ? "on" : "off");
+  faviconUrlEl.disabled = !enabled || !faviconHost;
+  faviconSave.disabled = !enabled || !faviconHost;
+  faviconClear.disabled = !faviconHost;
+}
+
+function setFaviconMessage(text, ok = true) {
+  faviconMessage.textContent = text;
+  faviconMessage.className = "favicon-status " + (text ? (ok ? "ok" : "err") : "");
+}
+
+function updateFaviconPreview() {
+  const url = faviconUrlEl.value.trim();
+  if (!url || !isFaviconImageUrl(url)) {
+    faviconPreview.style.display = "none";
+    faviconPreview.removeAttribute("src");
+    return;
+  }
+  faviconPreview.src = url;
+  faviconPreview.style.display = "block";
+}
+
+async function sendFaviconUpdate(enabled, url) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab || !tab.url || !isFaviconPageUrl(tab.url)) return;
+
+  const msg = { type: "favicon_update", enabled, url };
+  try {
+    await chrome.tabs.sendMessage(tab.id, msg);
+  } catch {
+    try {
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["favicon.js"] });
+      await chrome.tabs.sendMessage(tab.id, msg).catch(() => {});
+    } catch {}
+  }
+}
+
+async function loadFavicon() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  faviconHost = "";
+  setFaviconMessage("");
+
+  if (!tab || !tab.url || !isFaviconPageUrl(tab.url)) {
+    faviconHostEl.textContent = "No accessible web page";
+    faviconUrlEl.value = "";
+    updateFaviconPreview();
+    updateFaviconUI(false);
+    return;
+  }
+
+  faviconHost = new URL(tab.url).hostname;
+  faviconHostEl.textContent = `Favicon for: ${faviconHost}`;
+
+  const data = await chrome.storage.local.get(["favicon_enabled", "favicon_overrides"]);
+  const enabled = data.favicon_enabled !== false;
+  const overrides = data.favicon_overrides || {};
+  faviconToggle.checked = enabled;
+  faviconUrlEl.value = overrides[faviconHost] || "";
+  updateFaviconPreview();
+  updateFaviconUI(enabled);
+  await sendFaviconUpdate(enabled, faviconUrlEl.value.trim());
+}
+
+faviconToggle.addEventListener("change", async () => {
+  const enabled = faviconToggle.checked;
+  updateFaviconUI(enabled);
+  await chrome.storage.local.set({ favicon_enabled: enabled });
+  await sendFaviconUpdate(enabled, faviconUrlEl.value.trim());
+});
+
+faviconUrlEl.addEventListener("input", () => {
+  updateFaviconPreview();
+  setFaviconMessage("");
+});
+
+faviconSave.addEventListener("click", async () => {
+  const url = faviconUrlEl.value.trim();
+  if (!faviconHost) return;
+  if (!isFaviconImageUrl(url)) {
+    setFaviconMessage("Invalid favicon URL", false);
+    return;
+  }
+
+  const data = await chrome.storage.local.get(["favicon_overrides"]);
+  const overrides = data.favicon_overrides || {};
+  if (url) overrides[faviconHost] = url;
+  else delete overrides[faviconHost];
+
+  await chrome.storage.local.set({ favicon_overrides: overrides });
+  await sendFaviconUpdate(faviconToggle.checked, url);
+  setFaviconMessage(url ? "Saved" : "Cleared");
+});
+
+faviconClear.addEventListener("click", async () => {
+  if (!faviconHost) return;
+  const data = await chrome.storage.local.get(["favicon_overrides"]);
+  const overrides = data.favicon_overrides || {};
+  delete overrides[faviconHost];
+  await chrome.storage.local.set({ favicon_overrides: overrides });
+  faviconUrlEl.value = "";
+  updateFaviconPreview();
+  await sendFaviconUpdate(faviconToggle.checked, "");
+  setFaviconMessage("Cleared");
+});
+
+// ═══════════════════════════════════
 //  YouTube Unhook
 // ═══════════════════════════════════
 const unhookToggle = document.getElementById("unhookToggle");
@@ -659,6 +801,74 @@ for (const [key, id] of Object.entries(UNHOOK_FEATURE_IDS)) {
     await chrome.storage.local.set({ ["unhook_" + key]: val });
     if (unhookToggle.checked) {
       await sendUnhookUpdate(true, getFeatureStates());
+    }
+  });
+}
+
+// ═══════════════════════════════════
+//  LinkedIn Filter
+// ═══════════════════════════════════
+const linkedinToggle = document.getElementById("linkedinToggle");
+const linkedinStatus = document.getElementById("linkedinStatus");
+const linkedinFeatureEl = document.getElementById("linkedinFeatures");
+
+const LINKEDIN_FEATURE_IDS = {
+  suggestions: "linkedinSuggestions",
+};
+
+function getLinkedInFeatureStates() {
+  const features = {};
+  for (const [key, id] of Object.entries(LINKEDIN_FEATURE_IDS)) {
+    features[key] = document.getElementById(id).checked;
+  }
+  return features;
+}
+
+async function sendLinkedInUpdate(enabled, features) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab || !tab.url || !/^https?:\/\/(?:[a-z]+\.)?linkedin\.com\//.test(tab.url)) return;
+
+  const msg = { type: "linkedin_update", enabled, features };
+  try {
+    await chrome.tabs.sendMessage(tab.id, msg);
+  } catch {
+    try {
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["linkedin.js"] });
+      await chrome.tabs.sendMessage(tab.id, msg).catch(() => {});
+    } catch {}
+  }
+}
+
+async function loadLinkedIn() {
+  const keys = ["linkedin_enabled", "linkedin_suggestions"];
+  const data = await chrome.storage.local.get(keys);
+  const enabled = data.linkedin_enabled !== false;
+  linkedinToggle.checked = enabled;
+  document.getElementById("linkedinSuggestions").checked = data.linkedin_suggestions !== false;
+  updateLinkedInUI(enabled);
+  await sendLinkedInUpdate(enabled, getLinkedInFeatureStates());
+}
+
+function updateLinkedInUI(on) {
+  linkedinStatus.textContent = on ? "ON" : "OFF";
+  linkedinStatus.className = "status " + (on ? "on" : "off");
+  if (on) linkedinFeatureEl.classList.remove("disabled");
+  else linkedinFeatureEl.classList.add("disabled");
+}
+
+linkedinToggle.addEventListener("change", async () => {
+  const enabled = linkedinToggle.checked;
+  updateLinkedInUI(enabled);
+  await chrome.storage.local.set({ linkedin_enabled: enabled });
+  await sendLinkedInUpdate(enabled, getLinkedInFeatureStates());
+});
+
+for (const [key, id] of Object.entries(LINKEDIN_FEATURE_IDS)) {
+  document.getElementById(id).addEventListener("change", async () => {
+    const val = document.getElementById(id).checked;
+    await chrome.storage.local.set({ ["linkedin_" + key]: val });
+    if (linkedinToggle.checked) {
+      await sendLinkedInUpdate(true, getLinkedInFeatureStates());
     }
   });
 }
